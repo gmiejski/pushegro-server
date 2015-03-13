@@ -22,11 +22,22 @@ public class User {
     }
 
     public void addWatcher(AuctionPredicate predicate) {
-        Optional<Watcher> first = watchers.stream().filter(watcher -> watcher.getPredicate().equals(predicate)).findFirst();
+        Optional<Watcher> first = watchers.stream()
+                .filter(watcher -> watcher.getPredicate().equals(predicate))
+                .findFirst();
+
         if (first.isPresent()) {
             return;
         }
         watchers.add(new Watcher(predicate));
+    }
+
+    public Watcher loadWatcherByPredicateId(long predicate) {
+
+        return watchers.stream()
+                .filter(watcher -> watcher.getPredicate().getPredicateId() == predicate)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No matching predicate"));
     }
 
     public String getUsername() {

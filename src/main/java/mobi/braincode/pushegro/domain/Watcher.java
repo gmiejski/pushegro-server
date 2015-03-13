@@ -11,7 +11,7 @@ import java.util.Set;
 public class Watcher {
 
     private AuctionPredicate predicate;
-    private Set<Auction> matchingAuctions;
+    private Set<Auction> matchingAuctions = new HashSet<>();
 
     public Watcher() {
     }
