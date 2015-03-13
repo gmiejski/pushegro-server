@@ -6,6 +6,9 @@ package mobi.braincode.pushegro.domain.predicate;
 public class AuctionPredicate {
     private String keyword;
 
+    public AuctionPredicate() {
+    }
+
     public AuctionPredicate(String keyword) {
         this.keyword = keyword;
     }
