@@ -1,11 +1,17 @@
 package mobi.braincode.pushegro.domain;
 
 import mobi.braincode.pushegro.GcmId;
+import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
+
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class User {
 
     private String username;
     private GcmId gcmId;
+    private Set<Watcher> watchers = new HashSet<>();
 
     public User() {
     }
@@ -13,6 +19,14 @@ public class User {
     public User(String username, String gcmId) {
         this.username = username;
         this.gcmId = new GcmId(gcmId);
+    }
+
+    public void addWatcher(AuctionPredicate predicate) {
+        Optional<Watcher> first = watchers.stream().filter(watcher -> watcher.getPredicate().equals(predicate)).findFirst();
+        if (first.isPresent()) {
+            return;
+        }
+        watchers.add(new Watcher(predicate));
     }
 
     public String getUsername() {
@@ -35,6 +49,7 @@ public class User {
 
         return true;
     }
+
 
     @Override
     public int hashCode() {
