@@ -2,6 +2,7 @@ package mobi.braincode.pushegro.repository;
 
 import mobi.braincode.pushegro.domain.User;
 import mobi.braincode.pushegro.domain.Watcher;
+import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -14,9 +15,12 @@ public class UserRepository {
 
     public UserRepository() {
         User demoUser = new User("luk", "gcmId");
+        User grzesiekUser = new User("grzesiek", "grzesiekId");
         Watcher watcher = new Watcher();
+        Watcher grzesiekWatcher = new Watcher(new AuctionPredicate("maczeta"));
 
         users.put(demoUser, watcher);
+        users.put(grzesiekUser, grzesiekWatcher);
     }
 
     public void registerUser(User user) {
