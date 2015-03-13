@@ -1,4 +1,4 @@
-package mobi.braincode.pushegro.domain;
+package mobi.braincode.pushegro.domain.predicate;
 
 /**
  * @author Lukasz Raduj <raduj.lukasz@gmail.com>

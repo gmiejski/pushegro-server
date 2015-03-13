@@ -2,17 +2,25 @@ package mobi.braincode.pushegro.allegroapi.impl;
 
 import mobi.braincode.pushegro.allegroapi.api.IWebApiFacade;
 import mobi.braincode.pushegro.domain.Auction;
-import mobi.braincode.pushegro.domain.AuctionPredicate;
+import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
  * @author Lukasz Raduj <raduj.lukasz@gmail.com>
  */
 public class WebApiFacade implements IWebApiFacade {
+
+    private final AllegroWebApiClient client = new AllegroWebApiClient("raduj.lukasz@gmail.com", "mVmMeW2zJSMNpe1NTobgOGrQKA+r/Y0nKFiuUeLCx3Y=", "ac0a2fdf");
+
     @Override
     public Set<Auction> findAllAuctionByPredicate(AuctionPredicate predicate) {
-        return Collections.emptySet();
+        return client.loadAuctionsByPredicate(predicate);
+    }
+
+    public static void main(String[] args) {
+        WebApiFacade webApiFacade = new WebApiFacade();
+        Set<Auction> maczeta = webApiFacade.findAllAuctionByPredicate(new AuctionPredicate("maczeta"));
+        System.out.println(maczeta);
     }
 }
