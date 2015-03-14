@@ -11,4 +11,8 @@ public class AuctionList {
     public AuctionList(Set<Auction> auctions) {
         this.auctions = auctions;
     }
+
+    public Set<Auction> getAuctions() {
+        return auctions;
+    }
 }
