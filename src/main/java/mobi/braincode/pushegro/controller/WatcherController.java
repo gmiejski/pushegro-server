@@ -36,12 +36,10 @@ public class WatcherController {
     }
 
     @RequestMapping(value = "/predicates", method = RequestMethod.POST, consumes = "application/json")
-    public String addWatcherForUser(@PathVariable String username, @RequestBody @Valid AuctionPredicate predicate) {
+    public AuctionPredicate addWatcherForUser(@PathVariable String username, @RequestBody @Valid AuctionPredicate predicate) {
         User user = userRepository.loadUserByUsername(username);
 
-        user.addWatcher(predicate);
-
-        return format("Watcher added for %s user", user);
+        return user.addWatcher(predicate);
     }
 
     @RequestMapping(value = "/predicates", method = RequestMethod.GET, produces = "application/json")

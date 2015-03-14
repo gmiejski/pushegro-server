@@ -9,6 +9,8 @@ import mobi.braincode.pushegro.generated.holders.ArrayOfCategoriesStructHolder;
 import mobi.braincode.pushegro.generated.holders.ArrayOfExcludedWordsHolder;
 import mobi.braincode.pushegro.generated.holders.ArrayOfSearchResponseHolder;
 import org.apache.axis.encoding.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.LongHolder;
@@ -27,6 +29,7 @@ import static java.util.stream.Collectors.toSet;
  * @author Lukasz Raduj <raduj.lukasz@gmail.com>
  */
 public class AllegroWebApiClient {
+    private final static Logger log = LoggerFactory.getLogger(AllegroWebApiClient.class);
 
     private static final int COUNTRY_CODE = 1; // Poland
     private AllegroWebApiPortType apiPort;
@@ -40,7 +43,6 @@ public class AllegroWebApiClient {
         AllegroWebApiServiceLocator service = new AllegroWebApiServiceLocator();
 
         try {
-
             apiPort = service.getAllegroWebApiPort();
 
             long localVerKey = readAllegroKey();
@@ -48,27 +50,27 @@ public class AllegroWebApiClient {
             StringHolder info = new StringHolder();
             LongHolder currentVerKey = new LongHolder();
 
-            System.out.print("Receving webApiKey version... ");
+            log.info("Receving webApiKey version...");
             apiPort.doQuerySysStatus(1, COUNTRY_CODE, webApiKey, info, currentVerKey);
-            System.out.println("done. Current version webApiKey=" + currentVerKey.value);
+            log.info("done. Current version webApiKey={}", currentVerKey.value);
 
             if (localVerKey != currentVerKey.value) {
-                System.out.println("Warning: webApiKey versions don't match!");
+                log.info("Warning: webApiKey versions don't match!");
                 localVerKey = currentVerKey.value;
             }
 
             sessionHolder = new StringHolder();
             LongHolder userId = new LongHolder();
             LongHolder serverTime = new LongHolder();
-            System.out.print("Logging in... ");
+            log.info("Logging in... ");
 
             apiPort.doLoginEnc(username, encryptedPassword,
                     COUNTRY_CODE, webApiKey, localVerKey, sessionHolder, userId,
                     serverTime);
-            System.out.println("done.");
+            log.info("done.");
 
         } catch (Exception e) {
-            System.err.println(format("Error %s", e.getCause()));
+            log.error(format("Error %s", e.getCause()));
         }
     }
 
@@ -110,7 +112,7 @@ public class AllegroWebApiClient {
                     .collect(toSet());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error occurred: Cause:", e);
             return Collections.emptySet();
         }
     }

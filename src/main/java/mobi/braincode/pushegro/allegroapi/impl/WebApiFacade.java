@@ -19,10 +19,4 @@ public class WebApiFacade implements IWebApiFacade {
     public Set<Auction> findAllAuctionByPredicate(AuctionPredicate predicate) {
         return client.loadAuctionsByPredicate(predicate);
     }
-
-    public static void main(String[] args) {
-        WebApiFacade webApiFacade = new WebApiFacade();
-        Set<Auction> maczeta = webApiFacade.findAllAuctionByPredicate(new AuctionPredicate("maczeta"));
-        System.out.println(maczeta);
-    }
 }

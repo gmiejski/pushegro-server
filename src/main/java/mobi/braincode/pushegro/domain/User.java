@@ -26,15 +26,17 @@ public class User {
         this.gcmId = new GcmId(gcmId);
     }
 
-    public void addWatcher(AuctionPredicate predicate) {
+    public AuctionPredicate addWatcher(AuctionPredicate predicate) {
         Optional<Watcher> first = watchers.stream()
                 .filter(watcher -> watcher.getPredicate().equals(predicate))
                 .findFirst();
 
         if (first.isPresent()) {
-            return;
+            return first.get().getPredicate();
         }
         watchers.add(new Watcher(predicate));
+
+        return predicate;
     }
 
     public AuctionPredicate deleteWatcher(long predicateId) {
