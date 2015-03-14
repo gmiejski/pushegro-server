@@ -5,7 +5,10 @@ import mobi.braincode.pushegro.domain.Auction;
 import mobi.braincode.pushegro.domain.User;
 import mobi.braincode.pushegro.domain.Watcher;
 import mobi.braincode.pushegro.gcm.GcmNotifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -15,6 +18,8 @@ import java.util.*;
  */
 @Component
 public class ScheduledWatcher {
+
+    private static final Logger log = LoggerFactory.getLogger(ScheduledWatcher.class);
 
     private final GcmNotifier notifier;
     private final IWebApiFacade apiFacade;
@@ -30,13 +35,18 @@ public class ScheduledWatcher {
     }
 
     public void registerUser(User user) {
+        if (scheduledUsers.contains(user)) {
+            log.warn("User already registered for watching!");
+            return;
+        }
         scheduledUsers.add(user);
-        refreshWatchesAndNotifyMobiles();
     }
 
+    @Scheduled(fixedRate = 5000)
     public void refreshWatchesAndNotifyMobiles() {
-        Map<User, List<Long>> notifications = refreshWatches();
+        log.info("Update watches...");
 
+        Map<User, List<Long>> notifications = refreshWatches();
         notifications.forEach(notifier::notify);
     }
 
