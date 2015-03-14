@@ -1,8 +1,8 @@
 package mobi.braincode.pushegro.controller;
 
-import mobi.braincode.pushegro.domain.auction.Auction;
 import mobi.braincode.pushegro.domain.User;
 import mobi.braincode.pushegro.domain.Watcher;
+import mobi.braincode.pushegro.domain.auction.Auction;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 import mobi.braincode.pushegro.gcm.GcmNotifier;
 import mobi.braincode.pushegro.repository.UserRepository;
@@ -24,14 +24,16 @@ import static java.util.stream.Collectors.toSet;
 @RestController
 public class WatcherController {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private GcmNotifier gcmNotifier;
+    private ScheduledWatcher scheduledWatcher;
 
     @Autowired
-    private ScheduledWatcher scheduledWatcher;
+    public WatcherController(UserRepository userRepository, GcmNotifier gcmNotifier, ScheduledWatcher scheduledWatcher) {
+        this.userRepository = userRepository;
+        this.gcmNotifier = gcmNotifier;
+        this.scheduledWatcher = scheduledWatcher;
+    }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.POST, consumes = "application/json")
     public String addWatcherForUser(@PathVariable String username, @RequestBody AuctionPredicate predicate) {
@@ -40,13 +42,16 @@ public class WatcherController {
         user.addWatcher(predicate);
         scheduledWatcher.registerUser(user);
 
-        return format("Watcher added");
+        return format("Watcher added for %s user", user);
     }
 
     @RequestMapping(value = "/{username}/predicates", method = RequestMethod.GET, produces = "application/json")
     public Set<AuctionPredicate> getAllPredicates(@PathVariable String username) {
         User user = userRepository.loadUserByUsername(username);
-        return user.getWatchers().stream().map(Watcher::getPredicate).collect(toSet());
+        return user.getWatchers()
+                .stream()
+                .map(Watcher::getPredicate)
+                .collect(toSet());
     }
 
     @RequestMapping(value = "/{username}/{predicateId}", method = RequestMethod.GET, produces = "application/json")

@@ -1,7 +1,7 @@
 package mobi.braincode.pushegro.controller;
 
 import mobi.braincode.pushegro.domain.User;
-import mobi.braincode.pushegro.repository.UserRepository;
+import mobi.braincode.pushegro.repository.InMemoryUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,7 @@ import static java.lang.String.format;
 public class RegistrationController {
 
     @Autowired
-    private UserRepository userRepository;
+    private InMemoryUserRepository userRepository;
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public String registerUser(@RequestBody User user) {
