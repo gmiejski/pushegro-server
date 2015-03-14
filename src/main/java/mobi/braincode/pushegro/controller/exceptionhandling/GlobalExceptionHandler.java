@@ -1,5 +1,6 @@
-package mobi.braincode.pushegro.controller;
+package mobi.braincode.pushegro.controller.exceptionhandling;
 
+import mobi.braincode.pushegro.controller.RegistrationController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
