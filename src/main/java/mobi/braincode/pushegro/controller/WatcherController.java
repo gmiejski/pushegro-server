@@ -7,6 +7,7 @@ import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicateList;
 import mobi.braincode.pushegro.gcm.GcmNotifier;
 import mobi.braincode.pushegro.repository.UserRepository;
+import mobi.braincode.pushegro.scheduler.ScheduledWatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,16 +29,19 @@ public class WatcherController {
 
     private UserRepository userRepository;
     private GcmNotifier gcmNotifier;
+    private ScheduledWatcher scheduledWatcher;
 
     @Autowired
-    public WatcherController(UserRepository userRepository, GcmNotifier gcmNotifier) {
+    public WatcherController(UserRepository userRepository, GcmNotifier gcmNotifier, ScheduledWatcher scheduledWatcher) {
         this.userRepository = userRepository;
         this.gcmNotifier = gcmNotifier;
+        this.scheduledWatcher = scheduledWatcher;
     }
 
     @RequestMapping(value = "/predicates", method = RequestMethod.POST, consumes = "application/json")
     public AuctionPredicate addWatcherForUser(@PathVariable String username, @RequestBody @Valid AuctionPredicate predicate) {
         User user = userRepository.loadUserByUsername(username);
+        scheduledWatcher.refreshWatchesAndNotifyMobiles();
 
         return user.addWatcher(predicate);
     }
