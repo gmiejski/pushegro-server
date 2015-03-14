@@ -2,8 +2,9 @@ package mobi.braincode.pushegro.controller;
 
 import mobi.braincode.pushegro.domain.User;
 import mobi.braincode.pushegro.domain.Watcher;
-import mobi.braincode.pushegro.domain.auction.Auction;
+import mobi.braincode.pushegro.domain.auction.AuctionList;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
+import mobi.braincode.pushegro.domain.predicate.AuctionPredicateList;
 import mobi.braincode.pushegro.gcm.GcmNotifier;
 import mobi.braincode.pushegro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +43,21 @@ public class WatcherController {
     }
 
     @RequestMapping(value = "/predicates", method = RequestMethod.GET, produces = "application/json")
-    public Set<AuctionPredicate> getAllPredicates(@PathVariable String username) {
+    public AuctionPredicateList getAllPredicates(@PathVariable String username) {
         User user = userRepository.loadUserByUsername(username);
-        return user.getWatchers()
+        Set<AuctionPredicate> auctions = user.getWatchers()
                 .stream()
                 .map(Watcher::getPredicate)
                 .collect(toSet());
+        return new AuctionPredicateList(auctions);
     }
 
     @RequestMapping(value = "/predicates/{predicateId}", method = RequestMethod.GET, produces = "application/json")
-    public Set<Auction> loadAuctionsMatchingPredicate(@PathVariable String username, @PathVariable long predicateId) {
+    public AuctionList loadAuctionsMatchingPredicate(@PathVariable String username, @PathVariable long predicateId) {
         User user = userRepository.loadUserByUsername(username);
         Watcher watcher = user.loadWatcherByPredicateId(predicateId);
 
-        return watcher.getMatchingAuctions();
+        return new AuctionList(watcher.getMatchingAuctions());
     }
 
     @RequestMapping(value = "/predicates/{predicateId}", method = RequestMethod.DELETE)
