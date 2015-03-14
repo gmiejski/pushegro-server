@@ -2,6 +2,7 @@ package mobi.braincode.pushegro.domain;
 
 import mobi.braincode.pushegro.GcmId;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import static java.util.stream.Collectors.toSet;
 public class User {
 
     @NotNull
+    @NotEmpty
     private String username;
     private GcmId gcmId;
     private Set<Watcher> watchers = new HashSet<>();
