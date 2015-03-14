@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Lukasz Raduj <raduj.lukasz@gmail.com>
@@ -42,14 +43,10 @@ public class WatcherController {
         return format("Watcher added");
     }
 
-    @RequestMapping(value = "/{username}/notify", method = RequestMethod.POST, consumes = "application/json")
-    public String notifyUser(@PathVariable String username, @RequestBody String predicates) {
+    @RequestMapping(value = "/{username}/predicates", method = RequestMethod.GET, produces = "application/json")
+    public Set<AuctionPredicate> getAllPredicates(@PathVariable String username) {
         User user = userRepository.loadUserByUsername(username);
-
-        List<Long> ids = Stream.of(predicates.split(",")).map(Long::valueOf).collect(toList());
-
-        gcmNotifier.notify(user, ids);
-        return "User " + user.getUsername() + " notified!";
+        return user.getWatchers().stream().map(Watcher::getPredicate).collect(toSet());
     }
 
     @RequestMapping(value = "/{username}/{predicateId}", method = RequestMethod.GET, produces = "application/json")
@@ -58,5 +55,15 @@ public class WatcherController {
         Watcher watcher = user.loadWatcherByPredicateId(predicateId);
 
         return watcher.getMatchingAuctions();
+    }
+
+    @RequestMapping(value = "/{username}/notify", method = RequestMethod.POST, consumes = "application/json")
+    public String notifyUser(@PathVariable String username, @RequestBody String predicates) {
+        User user = userRepository.loadUserByUsername(username);
+
+        List<Long> ids = Stream.of(predicates.split(",")).map(Long::valueOf).collect(toList());
+
+        gcmNotifier.notify(user, ids);
+        return "User " + user.getUsername() + " notified!";
     }
 }

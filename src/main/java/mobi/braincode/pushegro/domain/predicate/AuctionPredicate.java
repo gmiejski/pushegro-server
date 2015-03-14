@@ -7,11 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Lukasz Raduj <raduj.lukasz@gmail.com>
  */
 public class AuctionPredicate {
-    private static long id = 1;
+    private static long id = 0;
 
     private String keyword;
     @JsonIgnore
-    private long predicateId = id++;
+    private long predicateId = ++id;
 
     public AuctionPredicate() {
     }
