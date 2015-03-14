@@ -7,6 +7,9 @@ import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toSet;
 
 public class User {
 
@@ -32,6 +35,20 @@ public class User {
             return;
         }
         watchers.add(new Watcher(predicate));
+    }
+
+    public AuctionPredicate deleteWatcher(long predicateId) {
+        Predicate<Watcher> predicate = watcher -> watcher.getPredicate().getPredicateId() == predicateId;
+
+        Set<Watcher> toRemove = watchers.stream()
+                .filter(predicate)
+                .collect(toSet());
+
+        this.watchers = watchers.stream()
+                .filter(watcher -> watcher.getPredicate().getPredicateId() != predicateId)
+                .collect(toSet());
+
+        return toRemove.stream().findFirst().map(Watcher::getPredicate).orElse(null);
     }
 
     public Watcher loadWatcherByPredicateId(long predicate) {
@@ -66,7 +83,6 @@ public class User {
 
         return true;
     }
-
 
     @Override
     public int hashCode() {

@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toSet;
  * @author Lukasz Raduj <raduj.lukasz@gmail.com>
  */
 @RestController
+@RequestMapping("/{username}")
 public class WatcherController {
 
     private UserRepository userRepository;
@@ -34,7 +35,7 @@ public class WatcherController {
         this.gcmNotifier = gcmNotifier;
     }
 
-    @RequestMapping(value = "/{username}/predicates", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/predicates", method = RequestMethod.POST, consumes = "application/json")
     public String addWatcherForUser(@PathVariable String username, @RequestBody @Valid AuctionPredicate predicate) {
         User user = userRepository.loadUserByUsername(username);
 
@@ -43,7 +44,7 @@ public class WatcherController {
         return format("Watcher added for %s user", user);
     }
 
-    @RequestMapping(value = "/{username}/predicates", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/predicates", method = RequestMethod.GET, produces = "application/json")
     public Set<AuctionPredicate> getAllPredicates(@PathVariable String username) {
         User user = userRepository.loadUserByUsername(username);
         return user.getWatchers()
@@ -52,7 +53,7 @@ public class WatcherController {
                 .collect(toSet());
     }
 
-    @RequestMapping(value = "/{username}/predicates/{predicateId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/predicates/{predicateId}", method = RequestMethod.GET, produces = "application/json")
     public Set<Auction> loadAuctionsMatchingPredicate(@PathVariable String username, @PathVariable long predicateId) {
         User user = userRepository.loadUserByUsername(username);
         Watcher watcher = user.loadWatcherByPredicateId(predicateId);
@@ -60,7 +61,14 @@ public class WatcherController {
         return watcher.getMatchingAuctions();
     }
 
-    @RequestMapping(value = "/{username}/notify", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/predicates/{predicateId}", method = RequestMethod.DELETE)
+    public AuctionPredicate deletePredicate(@PathVariable String username, @PathVariable long predicateId) {
+        User user = userRepository.loadUserByUsername(username);
+
+        return user.deleteWatcher(predicateId);
+    }
+
+    @RequestMapping(value = "/notify", method = RequestMethod.POST, consumes = "application/json")
     public String notifyUser(@PathVariable @NotNull String username, @RequestBody String predicates) {
         User user = userRepository.loadUserByUsername(username);
 

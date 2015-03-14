@@ -37,8 +37,6 @@ public class Watcher {
 
         Watcher watcher = (Watcher) o;
 
-        if (matchingAuctions != null ? !matchingAuctions.equals(watcher.matchingAuctions) : watcher.matchingAuctions != null)
-            return false;
         if (predicate != null ? !predicate.equals(watcher.predicate) : watcher.predicate != null) return false;
 
         return true;
@@ -46,8 +44,6 @@ public class Watcher {
 
     @Override
     public int hashCode() {
-        int result = predicate != null ? predicate.hashCode() : 0;
-        result = 31 * result + (matchingAuctions != null ? matchingAuctions.hashCode() : 0);
-        return result;
+        return predicate != null ? predicate.hashCode() : 0;
     }
 }
