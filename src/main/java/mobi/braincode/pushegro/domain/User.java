@@ -40,6 +40,10 @@ public class User {
                 .orElseThrow(() -> new RuntimeException("No matching predicate"));
     }
 
+    public Set<Watcher> getWatchers() {
+        return new HashSet<>(watchers);
+    }
+
     public String getUsername() {
         return username;
     }

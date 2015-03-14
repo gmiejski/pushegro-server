@@ -1,7 +1,7 @@
 package mobi.braincode.pushegro.controller;
 
-import mobi.braincode.pushegro.repository.UserRepository;
 import mobi.braincode.pushegro.domain.User;
+import mobi.braincode.pushegro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

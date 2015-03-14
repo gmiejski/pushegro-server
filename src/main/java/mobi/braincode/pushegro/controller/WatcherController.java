@@ -3,17 +3,16 @@ package mobi.braincode.pushegro.controller;
 import mobi.braincode.pushegro.domain.Auction;
 import mobi.braincode.pushegro.domain.User;
 import mobi.braincode.pushegro.domain.Watcher;
-import mobi.braincode.pushegro.repository.UserRepository;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 import mobi.braincode.pushegro.gcm.GcmNotifier;
 import mobi.braincode.pushegro.repository.UserRepository;
+import mobi.braincode.pushegro.scheduler.ScheduledWatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Stream;
-
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
@@ -30,11 +29,15 @@ public class WatcherController {
     @Autowired
     private GcmNotifier gcmNotifier;
 
+    @Autowired
+    private ScheduledWatcher scheduledWatcher;
+
     @RequestMapping(value = "/{username}", method = RequestMethod.POST, consumes = "application/json")
     public String addWatcherForUser(@PathVariable String username, @RequestBody AuctionPredicate predicate) {
         User user = userRepository.loadUserByUsername(username);
 
         user.addWatcher(predicate);
+        scheduledWatcher.registerUser(user);
 
         return format("Watcher added");
     }
@@ -43,9 +46,9 @@ public class WatcherController {
     public String notifyUser(@PathVariable String username, @RequestBody String predicates) {
         User user = userRepository.loadUserByUsername(username);
 
-        List<String> predicatesChanged = Stream.of(predicates.split(",")).collect(toList());
+        List<Long> ids = Stream.of(predicates.split(",")).map(Long::valueOf).collect(toList());
 
-        gcmNotifier.notify(user, predicatesChanged);
+        gcmNotifier.notify(user, ids);
         return "User " + user.getUsername() + " notified!";
     }
 
