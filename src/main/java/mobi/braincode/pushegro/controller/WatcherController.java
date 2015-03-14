@@ -46,6 +46,7 @@ public class WatcherController {
         return user.addWatcher(predicate);
     }
 
+
     @RequestMapping(value = "/predicates", method = RequestMethod.GET, produces = "application/json")
     public AuctionPredicateList getAllPredicates(@PathVariable String username) {
         User user = userRepository.loadUserByUsername(username);
