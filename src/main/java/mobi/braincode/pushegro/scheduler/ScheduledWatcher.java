@@ -42,7 +42,7 @@ public class ScheduledWatcher {
         scheduledUsers.add(user);
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(initialDelay = 8000, fixedRate = 5000)
     public void refreshWatchesAndNotifyMobiles() {
         log.info("Update watches...");
 

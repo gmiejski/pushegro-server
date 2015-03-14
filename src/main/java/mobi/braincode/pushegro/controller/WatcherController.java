@@ -6,7 +6,6 @@ import mobi.braincode.pushegro.domain.auction.Auction;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 import mobi.braincode.pushegro.gcm.GcmNotifier;
 import mobi.braincode.pushegro.repository.UserRepository;
-import mobi.braincode.pushegro.scheduler.ScheduledWatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,21 +25,18 @@ public class WatcherController {
 
     private UserRepository userRepository;
     private GcmNotifier gcmNotifier;
-    private ScheduledWatcher scheduledWatcher;
 
     @Autowired
-    public WatcherController(UserRepository userRepository, GcmNotifier gcmNotifier, ScheduledWatcher scheduledWatcher) {
+    public WatcherController(UserRepository userRepository, GcmNotifier gcmNotifier) {
         this.userRepository = userRepository;
         this.gcmNotifier = gcmNotifier;
-        this.scheduledWatcher = scheduledWatcher;
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/{username}/predicates", method = RequestMethod.POST, consumes = "application/json")
     public String addWatcherForUser(@PathVariable String username, @RequestBody AuctionPredicate predicate) {
         User user = userRepository.loadUserByUsername(username);
 
         user.addWatcher(predicate);
-        scheduledWatcher.registerUser(user);
 
         return format("Watcher added for %s user", user);
     }
@@ -54,7 +50,7 @@ public class WatcherController {
                 .collect(toSet());
     }
 
-    @RequestMapping(value = "/{username}/{predicateId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/{username}/predicates/{predicateId}", method = RequestMethod.GET, produces = "application/json")
     public Set<Auction> loadAuctionsMatchingPredicate(@PathVariable String username, @PathVariable long predicateId) {
         User user = userRepository.loadUserByUsername(username);
         Watcher watcher = user.loadWatcherByPredicateId(predicateId);

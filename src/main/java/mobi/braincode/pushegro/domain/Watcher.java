@@ -14,9 +14,6 @@ public class Watcher {
     private AuctionPredicate predicate;
     private Set<Auction> matchingAuctions = new HashSet<>();
 
-    public Watcher() {
-    }
-
     public Watcher(AuctionPredicate predicate) {
         this.predicate = predicate;
     }
