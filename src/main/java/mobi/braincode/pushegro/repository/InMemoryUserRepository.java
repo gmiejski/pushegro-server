@@ -26,4 +26,9 @@ public class InMemoryUserRepository implements UserRepository {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No such user in repository"));
     }
+
+
+    public Set<User> getUsers() {
+        return users;
+    }
 }
