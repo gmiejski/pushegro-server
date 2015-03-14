@@ -9,6 +9,8 @@ import mobi.braincode.pushegro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -33,7 +35,7 @@ public class WatcherController {
     }
 
     @RequestMapping(value = "/{username}/predicates", method = RequestMethod.POST, consumes = "application/json")
-    public String addWatcherForUser(@PathVariable String username, @RequestBody AuctionPredicate predicate) {
+    public String addWatcherForUser(@PathVariable String username, @RequestBody @Valid AuctionPredicate predicate) {
         User user = userRepository.loadUserByUsername(username);
 
         user.addWatcher(predicate);
@@ -59,7 +61,7 @@ public class WatcherController {
     }
 
     @RequestMapping(value = "/{username}/notify", method = RequestMethod.POST, consumes = "application/json")
-    public String notifyUser(@PathVariable String username, @RequestBody String predicates) {
+    public String notifyUser(@PathVariable @NotNull String username, @RequestBody String predicates) {
         User user = userRepository.loadUserByUsername(username);
 
         List<Long> ids = Stream.of(predicates.split(",")).map(Long::valueOf).collect(toList());

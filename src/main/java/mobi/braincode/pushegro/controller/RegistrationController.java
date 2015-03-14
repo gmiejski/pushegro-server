@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 import static java.lang.String.format;
 
 @RestController
@@ -25,13 +27,10 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-    public String registerUser(@RequestBody User user) {
-        try {
-            userRepository.registerUser(user);
-            scheduledWatcher.registerUser(user);
-            return format("user registered:%s\nGCMID:%s", user.getUsername(), user.getGcmId());
-        } catch (IllegalStateException e) {
-            return e.getMessage();
-        }
+    public String registerUser(@RequestBody @Valid User user) {
+        userRepository.registerUser(user);
+        scheduledWatcher.registerUser(user);
+
+        return format("user registered:%s\nGCMID:%s", user.getUsername(), user.getGcmId());
     }
 }

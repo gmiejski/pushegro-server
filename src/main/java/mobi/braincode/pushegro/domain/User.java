@@ -3,12 +3,14 @@ package mobi.braincode.pushegro.domain;
 import mobi.braincode.pushegro.GcmId;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 public class User {
 
+    @NotNull
     private String username;
     private GcmId gcmId;
     private Set<Watcher> watchers = new HashSet<>();
