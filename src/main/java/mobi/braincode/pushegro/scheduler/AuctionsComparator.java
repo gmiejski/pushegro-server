@@ -1,6 +1,6 @@
 package mobi.braincode.pushegro.scheduler;
 
-import mobi.braincode.pushegro.domain.Auction;
+import mobi.braincode.pushegro.domain.auction.Auction;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;

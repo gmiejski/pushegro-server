@@ -1,6 +1,6 @@
 package mobi.braincode.pushegro.controller;
 
-import mobi.braincode.pushegro.domain.Auction;
+import mobi.braincode.pushegro.domain.auction.Auction;
 import mobi.braincode.pushegro.domain.User;
 import mobi.braincode.pushegro.domain.Watcher;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;

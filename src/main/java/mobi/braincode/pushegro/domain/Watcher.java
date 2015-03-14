@@ -1,5 +1,6 @@
 package mobi.braincode.pushegro.domain;
 
+import mobi.braincode.pushegro.domain.auction.Auction;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 
 import java.util.HashSet;

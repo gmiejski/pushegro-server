@@ -1,6 +1,6 @@
 package mobi.braincode.pushegro.allegroapi.api;
 
-import mobi.braincode.pushegro.domain.Auction;
+import mobi.braincode.pushegro.domain.auction.Auction;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 
 import java.util.Set;

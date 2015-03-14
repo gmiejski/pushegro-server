@@ -1,6 +1,6 @@
 package mobi.braincode.pushegro.allegroapi.impl;
 
-import mobi.braincode.pushegro.domain.Auction;
+import mobi.braincode.pushegro.domain.auction.Auction;
 import mobi.braincode.pushegro.domain.predicate.AuctionPredicate;
 import mobi.braincode.pushegro.generated.AllegroWebApiPortType;
 import mobi.braincode.pushegro.generated.AllegroWebApiServiceLocator;
@@ -100,7 +100,15 @@ public class AllegroWebApiClient {
                     searchCountFeatured, searchArray, searchExcludedWords,
                     searchCategories);
 
-            return Arrays.stream(searchArray.value).map(wsdlAuction -> new Auction(wsdlAuction.getSItId(), wsdlAuction.getSItName())).collect(toSet());
+            return Arrays.stream(searchArray.value)
+                    .map(wsdlAuction -> {
+                        Auction auction = new Auction(wsdlAuction.getSItId(), wsdlAuction.getSItName());
+                        auction.setEndDateTime(wsdlAuction.getSItEndingTime());
+                        auction.setPrice(wsdlAuction.getSItPrice());
+                        return auction;
+                    })
+                    .collect(toSet());
+
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptySet();
