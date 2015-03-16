@@ -8,6 +8,8 @@ import mobi.braincode.pushegro.domain.predicate.AuctionPredicateList;
 import mobi.braincode.pushegro.gcm.GcmNotifier;
 import mobi.braincode.pushegro.repository.UserRepository;
 import mobi.braincode.pushegro.scheduler.ScheduledWatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,7 @@ import static java.util.stream.Collectors.toSet;
 @RestController
 @RequestMapping("/{username}")
 public class WatcherController {
+    private static final Logger log = LoggerFactory.getLogger(WatcherController.class);
 
     private UserRepository userRepository;
     private GcmNotifier gcmNotifier;
@@ -40,6 +43,8 @@ public class WatcherController {
 
     @RequestMapping(value = "/predicates", method = RequestMethod.POST, consumes = "application/json")
     public AuctionPredicate addWatcherForUser(@PathVariable String username, @RequestBody @Valid AuctionPredicate predicate) {
+        log.info(String.format("Adding predicate: %s for %s user!", predicate, username));
+
         User user = userRepository.loadUserByUsername(username);
         scheduledWatcher.refreshWatchesAndNotifyMobiles();
 

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -32,11 +31,19 @@ public class AllegroWebApiClient {
     private final static Logger log = LoggerFactory.getLogger(AllegroWebApiClient.class);
 
     private static final int COUNTRY_CODE = 1; // Poland
+    private static final String ALLEGRO_USERNAME = System.getenv("ALLEGRO_USERNAME");
+    private static final String ALLEGRO_PASSWORD_BASE64 = System.getenv("ALLEGRO_PASSWORD_BASE64");
+    private static final String ALLEGRO_KEY = System.getenv("ALLEGRO_KEY");
+
     private AllegroWebApiPortType apiPort;
     private StringHolder sessionHolder;
 
-    public AllegroWebApiClient(String username, String password, String webApiKey) {
-        login(username, password, webApiKey);
+    public AllegroWebApiClient() {
+        try {
+            login(ALLEGRO_USERNAME, ALLEGRO_PASSWORD_BASE64, ALLEGRO_KEY);
+        } catch (Exception e) {
+            log.error("Error during login to allegro!: ", e);
+        }
     }
 
     private void login(String username, String encryptedPassword, String webApiKey) {
@@ -45,19 +52,13 @@ public class AllegroWebApiClient {
         try {
             apiPort = service.getAllegroWebApiPort();
 
-            long localVerKey = readAllegroKey();
 
             StringHolder info = new StringHolder();
             LongHolder currentVerKey = new LongHolder();
 
-            log.info("Receving webApiKey version...");
+            log.info("Receiving webApiKey version...");
             apiPort.doQuerySysStatus(1, COUNTRY_CODE, webApiKey, info, currentVerKey);
             log.info("done. Current version webApiKey={}", currentVerKey.value);
-
-            if (localVerKey != currentVerKey.value) {
-                log.info("Warning: webApiKey versions don't match!");
-                localVerKey = currentVerKey.value;
-            }
 
             sessionHolder = new StringHolder();
             LongHolder userId = new LongHolder();
@@ -65,24 +66,20 @@ public class AllegroWebApiClient {
             log.info("Logging in... ");
 
             apiPort.doLoginEnc(username, encryptedPassword,
-                    COUNTRY_CODE, webApiKey, localVerKey, sessionHolder, userId,
+                    COUNTRY_CODE, webApiKey, currentVerKey.value, sessionHolder, userId,
                     serverTime);
             log.info("done.");
 
         } catch (Exception e) {
-            log.error(format("Error %s", e.getCause()));
+            log.error("Error: {}", e);
         }
     }
 
-    private String encryptAndEncodePassword(String password)
+    private static String encryptAndEncodePassword(String password)
             throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(password.getBytes("UTF-8"));
         return Base64.encode(md.digest());
-    }
-
-    private long readAllegroKey() {
-        return 1426037600;
     }
 
     public Set<Auction> loadAuctionsByPredicate(AuctionPredicate predicate) {
