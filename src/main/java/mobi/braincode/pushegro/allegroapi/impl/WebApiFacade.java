@@ -13,7 +13,11 @@ import java.util.Set;
 @Component
 public class WebApiFacade implements IWebApiFacade {
 
-    private final AllegroWebApiClient client = new AllegroWebApiClient("raduj.lukasz@gmail.com", "mVmMeW2zJSMNpe1NTobgOGrQKA+r/Y0nKFiuUeLCx3Y=", "ac0a2fdf");
+    final String ALLEGRO_USERNAME = System.getenv("ALLEGRO_USERNAME");
+    final String ALLEGRO_PASSWORD_BASE64 = System.getenv("ALLEGRO_PASSWORD_BASE64");
+    final String ALLEGRO_KEY = System.getenv("ALLEGRO_KEY");
+
+    private final AllegroWebApiClient client = new AllegroWebApiClient(ALLEGRO_USERNAME, ALLEGRO_PASSWORD_BASE64, ALLEGRO_KEY);
 
     @Override
     public Set<Auction> findAllAuctionByPredicate(AuctionPredicate predicate) {
