@@ -54,4 +54,12 @@ public class AuctionPredicate {
         result = 31 * result + (int) (predicateId ^ (predicateId >>> 32));
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "AuctionPredicate{" +
+                "keyword='" + keyword + '\'' +
+                ", predicateId=" + predicateId +
+                '}';
+    }
 }
